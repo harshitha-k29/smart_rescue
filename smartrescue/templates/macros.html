@@ -1,0 +1,17 @@
+{% macro badge(l) %}{% set u=urg(l) %}<span class="b {{u[0]}}">{{u[1]}}</span>{% endmacro %}
+{% macro cd(l) %}<span data-exp="{{l.exp}}">{{ left(l.exp) }}</span>{% endmacro %}
+{% macro stats(items) %}<div class="grid">{% for a,b,c in items %}<div class="card"><div class="sub">{{a}}</div><div class="k">{{b}}</div><div class="sub">{{c}}</div></div>{% endfor %}</div>{% endmacro %}
+{% macro chart(c) %}<div class="card"><b>{{c.title}}</b>
+{% set mx=([1]+(c.data|map(attribute=1)|map('abs')|list))|max %}
+{% if c.kind=='bar' %}{% for l,v in c.data %}<div class="bar"><span>{{l}}</span><i style="width:{{ ((v|abs)/mx*55)|round|int }}%"></i><b>{{ inr(v) if c.money else v }}</b></div>{% endfor %}
+{% else %}<div class="cols">{% for l,v in c.data %}<div><span class="sub">{{ inr(v) if c.money else v }}</span><i style="height:{{ ((v|abs)/mx*90)|round|int }}px"></i>{{l}}</div>{% endfor %}</div>{% endif %}</div>{% endmacro %}
+{% macro btn(id,act,label,cls='') %}<form method="post" action="/claim-action/{{id}}/{{act}}" style="display:inline"><button class="btn s {{cls}}">{{label}}</button></form> {% endmacro %}
+{% macro claims_table(cs) %}{% if not cs %}<div class="card sub">No records yet.</div>{% else %}
+<div class="card tw"><table><tr><th>Item</th><th>Qty</th><th>Type</th><th>Amount</th><th>Status</th><th>Pickup</th><th>Action</th></tr>
+{% for c in cs %}{% set s = (me.role=='seller' and c.seller==me.id) %}
+<tr><td>{{c.name}}<div class="sub">{{c.uname}}</div></td><td>{{c.qty}}</td><td>{{c.type}}</td>
+<td>{% if c.type=='sale' %}{{ inr(c.price*c.qty) }}{% else %}Donation, est. {{ inr(c.orig*c.qty) }}{% endif %}</td>
+<td>{{c.status}}</td><td class="sub">{{ c.pickup or '-' }}</td><td>
+{% if c.status=='requested' %}{% if s %}{{ btn(c.id,'approve','Approve') }}{{ btn(c.id,'reject','Reject','r') }}{% endif %}{% if c.uid==me.id %}{{ btn(c.id,'reject','Cancel','o') }}{% endif %}{% endif %}
+{% if c.status=='approved' %}{% if c.type=='sale' and s %}{{ btn(c.id,'complete','Mark sale completed') }}{% endif %}{% if c.type=='donation' and (c.uid==me.id or s) %}{{ btn(c.id,'complete','Confirm collection') }}{% endif %}{% endif %}
+</td></tr>{% endfor %}</table></div>{% endif %}{% endmacro %}

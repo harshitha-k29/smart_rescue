@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block public %}
+<div class="hero"><h1 style="font-size:40px;margin:0">SmartRescue</h1>
+<p style="font-size:18px"><b>Save Stock. Recover Value. Reduce Waste.</b></p>
+<p style="max-width:640px;margin:10px auto">Small grocers, pharmacies and distributors throw away short-shelf-life stock because selling it fast is hard. SmartRescue lists it, suggests a discount from the time left, and connects it with nearby buyers and NGOs, least time remaining first.</p>
+<a class="btn" href="/login/b1?next=/market">Explore Marketplace</a> <a class="btn o" href="#roles">Get Started</a></div>
+<div class="wrap">
+<div class="grid"><div class="card"><div class="sub">Demo statistic</div><div class="k">{{ f.sold+f.donu }} units</div><div class="sub">rescued in sample data</div></div>
+<div class="card"><div class="sub">Demo statistic</div><div class="k">{{ inr(f.rev) }}</div><div class="sub">recovered (sample sales)</div></div>
+<div class="card"><div class="sub">Demo statistic</div><div class="k">{{ inr(f.don) }}</div><div class="sub">donated, est. (sample)</div></div></div>
+<h2>How it works</h2><div class="grid"><div class="card"><b>1. List</b><br>Add or scan a product and confirm its expiry.</div><div class="card"><b>2. Price</b><br>Get a discount recommendation from time left and cost.</div><div class="card"><b>3. Match</b><br>Buyers and NGOs see the most urgent items first.</div><div class="card"><b>4. Complete</b><br>Approve, hand over, and see profit and impact update.</div></div>
+<h2>Features</h2><div class="grid"><div class="card">Live expiry countdowns with configurable urgency</div><div class="card">Smart discount calculator in INR</div><div class="card">Buyer and NGO match scores with reasons</div><div class="card">Profit and loss and impact dashboards</div><div class="card">Label scanner with an honest manual fallback</div><div class="card">Server-side atomic claims and expiry checks</div></div>
+<h2 id="roles">Choose a demo role</h2>
+<div class="grid">{% for id,n,d in roles %}<div class="card"><b>{{n}}</b><p class="sub">{{d}}</p><a class="btn s" href="/login/{{id}}">Enter</a></div>{% endfor %}</div>
+<p class="sub" style="margin-top:30px">DEMO MODE: all accounts, places, products and numbers are fictional. No real payments, GPS, SMS or email.</p>
+<form method="post" action="/reset"><button class="btn o s">Reset demo data</button></form></div>
+{% endblock %}

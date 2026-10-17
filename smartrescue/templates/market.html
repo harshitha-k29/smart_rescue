@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% from "macros.html" import badge,cd with context %}
+{% block body %}<h1>{{ 'Donation listings' if me.role=='ngo' else 'Marketplace' }}</h1>
+<form class="card row" method="get" style="margin-bottom:12px">
+<div><label>Search</label><input name="q" value="{{f.q}}"></div>
+<div><label>Category</label><select name="cat"><option value="">All</option>{% for c in CATS %}<option {{ 'selected' if f.cat==c }}>{{c}}</option>{% endfor %}</select></div>
+<div><label>Urgency</label><select name="urg">{% for v,t in [('','All'),('red','Critical'),('orange','Urgent'),('amber','Soon'),('green','Fresh')] %}<option value="{{v}}" {{ 'selected' if f.urg==v }}>{{t}}</option>{% endfor %}</select></div>
+<div><label>Max price (INR)</label><input name="maxp" type="number" value="{{f.maxp}}"></div>
+<div><label>Min discount %</label><input name="mind" type="number" value="{{f.mind}}"></div>
+<div><label>Area or PIN</label><input name="area" value="{{f.area}}"></div>
+<div><label>Sort</label><select name="sort">{% for v,t in [('urgency','Urgency (least time first)'),('price','Lowest price'),('discount','Highest discount'),('qty','Quantity'),('dist','Nearest area first')] %}<option value="{{v}}" {{ 'selected' if f.sort==v }}>{{t}}</option>{% endfor %}</select></div>
+<button class="btn">Apply</button></form>
+<div class="grid">{% for l in items %}<div class="card"><div class="ico">{{ ICON[l.cat]|safe }}</div><b>{{l.name}}</b>
+<div class="sub">{{l.cat}} | Pickup: {{l.area}} (sample)</div><div style="margin:6px 0">{{badge(l)}} {{cd(l)}}</div>
+<div>{% if l.mode=='donate' %}<b>Free (donation)</b> <s class="sub">{{ inr(l.orig) }}</s>{% else %}<b>{{ inr(l.price) }}</b> <s class="sub">{{ inr(l.orig) }}</s> <span class="sub">{{ dp(l) }}% off</span>{% endif %}</div>
+<div class="sub">{{ avail(l) }} units available | {{ status(l) }}</div>
+<a class="btn s {{ '' if hrs(l)>0 and avail(l)>0 else 'x' }}" style="margin-top:8px" href="/listing/{{l.id}}">{{ ('Request' if l.mode=='donate' else 'Claim') if hrs(l)>0 and avail(l)>0 else 'Unavailable' }}</a></div>
+{% else %}<div class="card">No listings match your filters.</div>{% endfor %}</div>{% endblock %}

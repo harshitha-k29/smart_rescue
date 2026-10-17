@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SmartRescue</title><link rel="stylesheet" href="/static/style.css"></head><body>
+{% if me %}
+<div class="layout"><nav class="side"><h2>SmartRescue</h2><div class="u sub" style="color:#a7f3d0;margin-bottom:8px">{{ me.name }}</div>
+{% for u,t in nav %}<a href="{{u}}" class="{{ 'on' if request.path==u }}">{{t}}{% if u=='/notifs' and unread %} ({{unread}}){% endif %}</a>{% endfor %}
+<a href="/logout">Switch role</a></nav>
+<main class="main"><div class="warn">DEMO MODE: fictional data stored in a local SQLite file. Demo logins are not real accounts or verified organisations. No real payments, GPS, SMS or email.</div>
+{% for c,m in get_flashed_messages(with_categories=true) %}<div class="msg {{c}}">{{m}}</div>{% endfor %}
+{% block body %}{% endblock %}</main></div>
+{% else %}{% block public %}{% endblock %}{% endif %}
+<script src="/static/app.js"></script></body></html>

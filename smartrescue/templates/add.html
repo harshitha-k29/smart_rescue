@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block body %}<h1>Add / scan product</h1>
+<div class="card"><h3>1. Scan label (optional)</h3><input type="file" id="scanfile" accept="image/*"><div id="pv"></div>
+<div class="warn" style="margin-top:8px">AI scanning is NOT connected in this build: no vision API is configured, so nothing is extracted and no OCR result is invented. Read the label and type the details below. A vision model (e.g. Gemini) should be called from the server so the key never reaches the browser, and its output would still need your confirmation.</div></div>
+<form id="addform" method="post" class="g2">
+<div class="card"><h3>2. Product details</h3><div class="f2">
+<div><label>Product name</label><input name="name" required placeholder="Could not confidently identify - enter manually"></div>
+<div><label>Category</label><select name="cat">{% for c in CATS %}<option>{{c}}</option>{% endfor %}</select></div>
+<div><label>Original price per unit (INR)</label><input name="orig" type="number" min="0" step="0.01" required></div>
+<div><label>Purchase cost per unit (INR)</label><input name="cost" type="number" min="0" step="0.01" required></div>
+<div><label>Quantity</label><input name="qty" type="number" min="1" step="1" required></div>
+<div><label>Minimum acceptable price (INR)</label><input name="minp" type="number" min="0" step="0.01" value="0"></div>
+<div><label>Expiry date and time (your local time)</label><input name="exp" type="datetime-local" required><input type="hidden" name="exp_ts"></div>
+<div><label>Batch / lot number</label><input name="batch" placeholder="Enter manually"></div>
+<div><label>Strategy</label><select name="strat"><option value="bal">Balanced</option><option value="fast">Sell fast</option><option value="value">Maximise value</option></select></div>
+<div><label>Listing type</label><select name="mode"><option value="sale">Sell at discount</option><option value="donate">Donate to NGO</option></select></div>
+<div><label>Pickup area (sample)</label><select name="area">{% for a in AREAS %}<option>{{a}}</option>{% endfor %}</select></div>
+<div><label>Storage</label><input name="stor" placeholder="e.g. Keep chilled 2-8 C"></div>
+<div><label>Condition</label><select name="cond"><option value="ok">Sealed and undamaged</option><option value="bad">Damaged, opened or recalled</option></select></div></div></div>
+<div><div class="card"><h3>3. Discount calculator</h3><div id="calc" class="sub">Enter price, quantity and a future expiry.</div></div>
+<div class="card" style="margin-top:14px"><h3>4. Confirm and publish</h3>
+<label>Final price per unit (INR; ignored for donations)</label><input id="f_price" name="price" type="number" min="0" step="0.01">
+<p><button type="button" id="userec" class="btn o s">Use recommended price</button></p>
+<label><input type="checkbox" name="ov"> Override: allow price below my minimum</label>
+<label><input type="checkbox" name="ok1"> I checked the expiry date on the physical product</label>
+<label><input type="checkbox" name="ok2"> This product is safe, undamaged, not recalled and legal to sell or donate</label>
+<label><input type="checkbox" name="auth"> Pharmacy (OTC) only: I hold the required licence and keep batch records</label>
+<div class="warn" style="margin-top:8px">Prescription or restricted medicines are not allowed here. Being unexpired does not mean a product is safe.</div>
+<button class="btn">Publish listing</button></div></div></form>{% endblock %}

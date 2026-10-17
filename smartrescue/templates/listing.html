@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% from "macros.html" import badge,cd with context %}
+{% block body %}<a href="/market">&larr; Back</a>
+<div class="card" style="margin-top:8px"><div class="ico">{{ ICON[l.cat]|safe }}</div><h2 style="margin:0">{{l.name}}</h2>
+<p>{{badge(l)}} <b>{{cd(l)}}</b> <span class="sub">(expires {{ dt(l.exp) }}, server local time)</span></p>
+<div class="tw"><table>
+<tr><td>Category</td><td>{{l.cat}}</td><td>Status</td><td>{{ status(l) }}</td></tr>
+<tr><td>Price</td><td>{% if l.mode=='donate' %}Free (donation), ref. {{ inr(l.orig) }}{% else %}{{ inr(l.price) }} (MRP {{ inr(l.orig) }}, {{ dp(l) }}% off){% endif %}</td><td>Available</td><td>{{ avail(l) }} of {{ l.qty }}</td></tr>
+<tr><td>Batch</td><td>{{ l.batch or '-' }}</td><td>Verification</td><td>{{ l.ver }}</td></tr>
+<tr><td>Pickup area</td><td>{{ l.area }} (sample)</td><td>Storage</td><td>{{ l.stor or 'Not specified' }}</td></tr>
+<tr><td>Seller</td><td colspan="3">{{ seller.name }}</td></tr></table></div>
+<p class="sub">Not a safety guarantee. Check the physical product and label before use.</p>
+{% if me.role in ('buyer','ngo') %}
+{% if (me.role=='ngo') == (l.mode=='donate') %}
+{% if ok %}<form method="post" action="/claim/{{l.id}}" class="row"><div><label>Quantity (max {{ avail(l) }})</label><input name="qty" type="number" min="1" max="{{ avail(l) }}" value="1"></div>
+<button class="btn">{{ 'Request donation' if l.mode=='donate' else 'Claim' }}</button></form>
+<p class="sub">Expiry and quantity are re-checked on the server when you submit. This is a request: nothing is purchased or received until the seller approves and handover is marked completed. No payment is processed here.</p>
+{% else %}<div class="warn">Cannot be claimed (status: {{ status(l) }}).</div>{% endif %}
+{% else %}<div class="warn">This listing is for {{ 'NGOs' if l.mode=='donate' else 'buyers' }}.</div>{% endif %}
+<form method="post" action="/report/{{l.id}}"><button class="btn o s">Report listing</button></form>{% endif %}
+{% if matches %}<h3>Suggested buyers and NGOs</h3><div class="tw"><table><tr><th>Who</th><th>Score</th><th>Why</th></tr>
+{% for m in matches %}<tr><td>{{ m.u.name }}</td><td><b>{{ m.s }}</b><div class="sub">{{ m.tag }}</div></td><td class="sub">{{ m.w }}</td></tr>{% endfor %}</table></div>
+<p class="sub">Sample locations; distances are rough estimates from area centres. Nobody is contacted automatically.</p>{% endif %}
+<h3>History</h3><div class="sub">{% for x in h %}{{ dt(x.ts) }} - {{ x.msg }}<br>{% endfor %}</div></div>{% endblock %}

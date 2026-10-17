@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block body %}<h1>Notifications</h1>
+<p class="sub">In-app only (simulated). No email, SMS or WhatsApp is sent.</p>
+<form method="post" action="/notifs/read"><button class="btn o s">Mark all read</button></form><br>
+{% for n in ns %}<div class="card" style="margin-bottom:8px;{{ 'opacity:.65' if n.rd else 'border-left:4px solid var(--g)' }}">{{ n.msg }}<div class="sub">{{ dt(n.ts) }}</div></div>
+{% else %}<div class="card sub">No notifications.</div>{% endfor %}{% endblock %}

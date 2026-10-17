@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% from "macros.html" import badge,cd with context %}
+{% block body %}<h1>{{ 'All listings' if me.role=='admin' else 'Inventory' }}</h1>
+{% if ls %}<div class="card tw"><table><tr><th>Item</th><th>Status</th><th>Left / total</th><th>Price</th><th>Expiry</th><th>Actions</th></tr>
+{% for l in ls %}<tr><td><a href="/listing/{{l.id}}">{{l.name}}</a><div class="sub">{{l.cat}} | {{l.id}} | {{l.mode}}</div></td><td>{{ status(l) }}</td>
+<td>{{ avail(l) }} / {{ l.qty }}</td><td>{{ 'Free' if l.mode=='donate' else inr(l.price) }}</td><td>{{badge(l)}}<div class="sub">{{cd(l)}}</div></td><td>
+{% if me.role=='seller' and l.seller==me.id and not l.removed %}<form method="post" action="/listing/{{l.id}}/edit" class="row" style="margin-bottom:4px"><input name="qty" type="number" value="{{l.qty}}" style="min-width:60px"><input name="price" type="number" step="0.01" value="{{l.price}}" style="min-width:70px"><button class="btn o s">Save</button></form>{% endif %}
+{% if l.removed %}{% if me.role=='admin' %}<form method="post" action="/listing/{{l.id}}/restore"><button class="btn s">Restore</button></form>{% endif %}
+{% else %}<form method="post" action="/listing/{{l.id}}/remove" onsubmit="return confirm('Remove this listing?')"><button class="btn r s">Remove</button></form>{% endif %}
+</td></tr>{% endfor %}</table></div>{% else %}<div class="card">No listings yet.</div>{% endif %}{% endblock %}

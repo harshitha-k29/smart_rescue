@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% from "macros.html" import badge,cd,stats,chart,claims_table with context %}
+{% block body %}<h1>{{title}}</h1>
+{% if actions %}<p>{% for u,t in actions %}<a class="btn o" href="{{u}}">{{t}}</a> {% endfor %}</p>{% endif %}
+{% if note %}<div class="warn">{{note}}</div>{% endif %}
+{% if sts %}{{ stats(sts) }}{% endif %}
+{% if alerts is not none %}<h3>Urgent expiry alerts</h3>{% if alerts %}<div class="card">{% for l in alerts %}<div>{{badge(l)}} <a href="/listing/{{l.id}}">{{l.name}}</a> - {{cd(l)}}</div>{% endfor %}</div>{% else %}<div class="card sub">No urgent listings.</div>{% endif %}{% endif %}
+{% if charts %}<div class="g2">{% for c in charts %}{{ chart(c) }}{% endfor %}</div>{% endif %}
+{% if claims is not none %}{% if ctitle %}<h3>{{ctitle}}</h3>{% endif %}{{ claims_table(claims) }}{% endif %}
+{% if reports is not none %}<h3>Reported listings</h3>{% if reports %}<div class="card tw"><table>{% for r in reports %}<tr><td>{{r.name}}</td><td>{{r.uname}}</td><td>{{ dt(r.ts) }}</td><td><a class="btn s" href="/listing/{{r.lid}}">Review</a>
+<form method="post" action="/listing/{{r.lid}}/remove" style="display:inline" onsubmit="return confirm('Remove this listing?')"><button class="btn r s">Remove</button></form></td></tr>{% endfor %}</table></div>{% else %}<div class="card sub">No reports.</div>{% endif %}{% endif %}
+{% endblock %}
